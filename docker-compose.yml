@@ -1,0 +1,38 @@
+version: '2'
+services:
+  upstream:
+    build: .
+    hostname: upstream
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=myuser
+      - RABBITMQ_DEFAULT_PASS=mypass
+      - RABBITMQ_SSL_CERT_FILE=/tls/cert.pem
+      - RABBITMQ_SSL_KEY_FILE=/tls/key.pem
+      - RABBITMQ_SSL_CA_FILE=/tls/cacert.pem
+      - RABBITMQ_SSL_CACERTS=/tls/cacert.pem
+      - RABBITMQ_SSL_FAIL_IF_NO_PEER_CERT=true
+      - RABBITMQ_SSL_VERIFY=verify_peer
+      - RABBITMQ_CTL_ERL_ARGS=-proto_dist inet_tls
+    volumes:
+      - ./tls-upstream:/tls
+  downstream:
+    build: .
+    hostname: downstream
+    ports:
+      - "5673:5672"
+      - "15673:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=myuser
+      - RABBITMQ_DEFAULT_PASS=mypass
+      - RABBITMQ_SSL_CERT_FILE=/tls/cert.pem
+      - RABBITMQ_SSL_KEY_FILE=/tls/key.pem
+      - RABBITMQ_SSL_CA_FILE=/tls/cacert.pem
+      - RABBITMQ_SSL_CACERTS=/tls/cacert.pem
+      - RABBITMQ_SSL_FAIL_IF_NO_PEER_CERT=true
+      - RABBITMQ_SSL_VERIFY=verify_peer
+      - RABBITMQ_CTL_ERL_ARGS=-proto_dist inet_tls
+    volumes:
+      - ./tls-downstream:/tls
